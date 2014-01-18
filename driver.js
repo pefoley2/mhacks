@@ -71,4 +71,15 @@ Leap.loop(function(obj) {
 	$("#up").text("Up: " + up);
 	$("#down").text("Down: " + down);
 	$("#mode").text("Action Mode: " + mode);
+	
+	
+	var c = $("#visualization");
+	var ctx = c[0].getContext("2d");
+	ctx.clearRect(0, 0, c.width(), c.height());
+	ctx.fillStyle = "#000000";
+	var swidth = 100 + (up/2) - (down*2);
+	var sheight = swidth;
+	var sx = (c.width()/2) - (swidth/2) - left + right;
+	var sy = (c.height()/2) - (sheight/2) - (forward*2) + backward;
+	ctx.fillRect(sx, sy, swidth, sheight);
 });
