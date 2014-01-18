@@ -4,12 +4,14 @@
 
  	$("#fingerCount").text(frame_instance.fingers.count);
  	$("#handCount").text(frame_instance.hands.count);
+
  });
 
  my_controller.on('connect', function(){
     setInterval(function(){
       var frame = my_controller.frame();
     }, 500);
+    alert("Connected");
   });
 
   my_controller.connect();
