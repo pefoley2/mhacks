@@ -30,17 +30,18 @@
 		
 		<script src="http://code.jquery.com/jquery-2.0.3.min.js"></script>
 		<script src="./lib/three.min.js"></script>
-		<script src="./lib/OculusRiftEffect.js"></script>
-		<script src="./lib/OculusRiftControls.js"></script>
 		<script src="./lib/stats.min.js"></script>
 		<script src="./lib/vr.js"></script>
+		<script src="./code/oculusIntegration.js"></script>
+		<script src="./code/player.js"></script>
 		<script src="./code/primitives.js"></script>
+		<script src="./code/bullet.js"></script>
 
 		<script>
 			
 
 			var container, stats;
-			var camera, controls, scene, renderer;
+			var camera, player, scene, renderer;
 			var time = Date.now();
 			var ray;
 			var info;
@@ -84,11 +85,13 @@
 				// fog effect is used for awesome fade in
 				scene.fog = new THREE.Fog(0xffffff, 50, 50);
 				
+				// create camera
 				camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 7000 );			
 				camera.rotation.order = 'XYZ';
 				
-				controls = new THREE.OculusRiftControls( camera );
-				scene.add( controls.getObject() );
+				// create player character
+				player = new PlayerCharacter(camera);
+				scene.add(player.getObject());
 				
 				// loading code for things that can actually differ in levels
 				loadLevel();
@@ -136,14 +139,14 @@
 			function restartLevel()	{
 				scene.remove(levelMesh);
 				
-				controls.velocity.x = 0;
-				controls.velocity.y = 0;
-				controls.velocity.z = 0;
-				controls.canJump = false;
-				controls.moveBackward = false;
-				controls.moveForward = false;
-				controls.moveLeft = false;
-				controls.moveRight = false;
+				player.velocity.x = 0;
+				player.velocity.y = 0;
+				player.velocity.z = 0;
+				player.canJump = false;
+				player.moveBackward = false;
+				player.moveForward = false;
+				player.moveLeft = false;
+				player.moveRight = false;
 				
 				restartLevelFlag = false;
 				
@@ -169,7 +172,7 @@
 				
 				// poll VR, if it's ready
 				polled = vr.pollState(vrstate);
-				controls.update( angle, polled ? vrstate : null, levelMesh );
+				player.update( angle, polled ? vrstate : null, levelMesh );
 				
 				// the skybox has to keep up with the camera
 				skybox.position.x = camera.position.x;
