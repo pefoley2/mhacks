@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<title>MHacks Oculus Rift / LeapMotion Demo</title>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+		<style>
+			body {
+				color: rgb(168, 148, 0);
+				font-family:Monospace;
+				font-size:13px;
+				text-align:center;
+
+				background-color: #000000;
+				margin: 0px;
+				overflow: hidden;
+			}
+			
+			#info	{
+				position: absolute;
+				top: 0px; width: 100%;
+				padding: 5px;
+			}
+		</style>
+	</head>
+	<body>
+
+		<div id="container"><br /><br /><br /><br /><br />Loading ...</div>
+		<div id="info"></div>
+		<!-- -->
+		
+		<script src="./lib/three.min.new.js"></script>
+		<script src="./lib/OculusRiftEffect.js"></script>
+		<script src="./lib/OculusRiftControls.js"></script>
+		<script src="./lib/stats.min.js"></script>
+		<script src="./lib/vr.js"></script>
+		<script src="./code/primitives.js"></script>
+
+		<script>
+			
+
+			var container, stats;
+			var camera, controls, scene, renderer;
+			var time = Date.now();
+			var ray;
+			var info;
+
+			var cube;
+			var skybox;
+			var water;
+			var levelMesh;
+			
+			var alpha = 0;
+			
+			var level = [
+				'--333444333--',
+				'----------2--',
+				'--2----------',
+				'--22-----22--',
+				'---111-111---',
+				'-----1P1-----'
+			];
+
+			var clock = new THREE.Clock();
+
+			vr.load(function(error) {
+				if (error) {
+					alert('Plugin load failed: ' + error.toString());
+				}
+
+				//try {
+					init();
+					logic();
+					animate();
+				//} catch (e) {
+					//console.log(e);
+				//}
+			});
+			
+
+
+			function init() {
+				container = document.getElementById( 'container' );
+				scene = new THREE.Scene();
+				
+				camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 7000 );			
+				camera.rotation.order = 'XYZ';
+				//scene.add(camera);
+				
+				controls = new THREE.OculusRiftControls( camera );
+				scene.add( controls.getObject() );
+				
+				water = createWaterPlane(scene);
+				skybox = createSkybox(scene);
+				levelMesh = createLevelMesh(level, camera, scene);
+				
+				var ambientLight = new THREE.AmbientLight( 0x800080 );
+				scene.add( ambientLight );
+
+				var dirLight = new THREE.DirectionalLight( 0xffffee, 2.5 );
+				dirLight.position.set( 1, 1, 0.5 ).normalize();
+				scene.add( dirLight );
+				dirLight.castShadow = true;
+
+				renderer = new THREE.WebGLRenderer();
+				renderer.setClearColor( 0x000000, 1 );
+				renderer.setDepthTest(false);
+
+				//renderer.setSize( window.innerWidth, window.innerHeight );
+
+				
+				// Here is the effect for the Oculus Rift
+				// worldScale 100 means that 100 Units == 1m
+				effect = new THREE.OculusRiftEffect( renderer );
+				//effect.setSize( window.innerWidth, window.innerHeight );
+
+				container.innerHTML = "";
+
+				container.appendChild( renderer.domElement );
+
+				stats = new Stats();
+				stats.domElement.style.position = 'absolute';
+				stats.domElement.style.top = '0px';
+				container.appendChild( stats.domElement );
+
+				// GUI
+				window.addEventListener( 'resize', onWindowResize, false );
+				//document.addEventListener( 'keydown', keyPressed, false );
+
+				guiVisible = true;
+
+				//setInterval(logic, 66.66666);
+			}
+
+			function onWindowResize() {
+
+				camera.aspect = window.innerWidth / window.innerHeight;
+				camera.updateProjectionMatrix();
+
+				renderer.setSize( window.innerWidth, window.innerHeight );
+			}
+
+			var polled;
+			var vrstate = new vr.State();
+			var angle = 0;
+			
+			function logic()	{
+				var start = (new Date).getTime();
+				
+				// Poll VR, if it's ready.
+				polled = vr.pollState(vrstate);
+				controls.update( angle, polled ? vrstate : null, levelMesh );
+				
+				skybox.position.x = camera.position.x + moveObject.position.x;
+				skybox.position.y = camera.position.y + moveObject.position.y;
+				skybox.position.z = camera.position.z + moveObject.position.z;
+				
+				water[0].offset.x += 0.005;
+				water[0].offset.y += 0.005;
+				
+				var end = (new Date).getTime();
+				var delta = end - start;
+				var delay = 33.33 - delta;
+				setTimeout(function(){logic()}, delay);
+			}
+			
+			function animate() {
+				vr.requestAnimationFrame( animate );
+				
+				//logic();
+				
+				angle = effect.render( scene, camera, polled ? vrstate : null, angle );
+				
+				stats.update();
+			}
+
+		</script>
+
+	</body>
+</html>
