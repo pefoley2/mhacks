@@ -86,7 +86,14 @@ function createLevelMesh(level, camera, scene)	{
 			var pX = i * UNIT_LEN;
 			var pZ = j * UNIT_LEN;
 			
-			var height = 25 + (parseInt(c) - 1) * UNIT_HGT;
+			var blkHeight = 1;
+			if (c == 'P')	{
+				blkHeight = 1;
+			} else	{
+				blkHeight = parseInt(c) - 1;
+			}
+			
+			var height = 25 + (blkHeight * UNIT_HGT);
 			var cubeGeo = new THREE.CubeGeometry(UNIT_LEN, height, UNIT_LEN);
 			var cubeMesh = new THREE.Mesh(cubeGeo, basicMat);
 			

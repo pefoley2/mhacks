@@ -68,13 +68,9 @@
 					alert('Plugin load failed: ' + error.toString());
 				}
 
-				//try {
-					init();
-					logic();
-					animate();
-				//} catch (e) {
-					//console.log(e);
-				//}
+				init();
+				logic();
+				animate();
 			});
 			
 
@@ -85,7 +81,6 @@
 				
 				camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 7000 );			
 				camera.rotation.order = 'XYZ';
-				//scene.add(camera);
 				
 				controls = new THREE.OculusRiftControls( camera );
 				scene.add( controls.getObject() );
@@ -106,13 +101,7 @@
 				renderer.setClearColor( 0x000000, 1 );
 				renderer.setDepthTest(false);
 
-				//renderer.setSize( window.innerWidth, window.innerHeight );
-
-				
-				// Here is the effect for the Oculus Rift
-				// worldScale 100 means that 100 Units == 1m
 				effect = new THREE.OculusRiftEffect( renderer );
-				//effect.setSize( window.innerWidth, window.innerHeight );
 
 				container.innerHTML = "";
 
@@ -125,11 +114,8 @@
 
 				// GUI
 				window.addEventListener( 'resize', onWindowResize, false );
-				//document.addEventListener( 'keydown', keyPressed, false );
 
 				guiVisible = true;
-
-				//setInterval(logic, 66.66666);
 			}
 
 			function onWindowResize() {
@@ -166,8 +152,6 @@
 			
 			function animate() {
 				vr.requestAnimationFrame( animate );
-				
-				//logic();
 				
 				angle = effect.render( scene, camera, polled ? vrstate : null, angle );
 				
