@@ -7,9 +7,12 @@ var up = 0;
 var down = 0;
 
 
-var mode = 0;
+var mode = "None";
 
 var tolerance = 40;
+
+var c = $("#visualization")[0].getContext('2d');
+
 
 Leap.loop(function(obj) {
     var hands = obj.hands;
@@ -51,7 +54,13 @@ Leap.loop(function(obj) {
             down = 0;
 		}
 		
-		
+        if(hand.palmVelocity[2] > 200 && obj.fingers.length === 0 && forward > 0) {
+            mode = "Punch";
+		} else if((1 - Math.abs(hand.palmNormal[0])) < 0.2) {
+            mode = "Shoot";
+		} else {
+            mode = "None";
+		}
 		
 	} else {
         forward = 0;
@@ -60,9 +69,9 @@ Leap.loop(function(obj) {
         right = 0;
         up = 0;
         down = 0;
+        mode = "None";
     }
     
-    mode = obj.fingers.length;
     
 	$("#forward").text("Forward: " + forward);
 	$("#backward").text("Backward: " + backward);
@@ -70,16 +79,18 @@ Leap.loop(function(obj) {
 	$("#right").text("Right: " + right);
 	$("#up").text("Up: " + up);
 	$("#down").text("Down: " + down);
-	$("#mode").text("Action Mode: " + mode);
+	$("#mode").text("Action: " + mode);
 	
 	
-	var c = $("#visualization");
-	var ctx = c[0].getContext("2d");
-	ctx.clearRect(0, 0, c.width(), c.height());
-	ctx.fillStyle = "#000000";
+
+	c.clearRect(0, 0, 500, 400);
+	c.fillStyle = "#000000";
 	var swidth = 100 + (up/2) - (down*2);
 	var sheight = swidth;
-	var sx = (c.width()/2) - (swidth/2) - left + right;
-	var sy = (c.height()/2) - (sheight/2) - (forward*2) + backward;
-	ctx.fillRect(sx, sy, swidth, sheight);
+	var sx = 250 - (swidth/2) - left + right;
+	var sy = 200 - (sheight/2) - (forward*2) + backward;
+	c.fillRect(sx, sy, swidth, sheight);
+	
+
 });
+
