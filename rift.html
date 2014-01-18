@@ -24,7 +24,6 @@
 		</style>
 	</head>
 	<body>
-
 		<div id="container"><br /><br /><br /><br /><br />Loading ...</div>
 		<div id="info"></div>
 		<!-- -->
@@ -51,7 +50,9 @@
 			var water;
 			var levelMesh;
 			
-			var alpha = 0;
+			var restartLevelFlag;
+
+			var fogLevel = 10;
 			
 			var level = [
 				'--333444333--',
@@ -80,15 +81,22 @@
 				container = document.getElementById( 'container' );
 				scene = new THREE.Scene();
 				
+				// fog effect is used for awesome fade in
+				scene.fog = new THREE.Fog(0xffffff, 50, 50);
+				
 				camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 7000 );			
 				camera.rotation.order = 'XYZ';
 				
 				controls = new THREE.OculusRiftControls( camera );
 				scene.add( controls.getObject() );
 				
+				// loading code for things that can actually differ in levels
+				loadLevel();
+				
+				// presumably, every level in this demo is going to have water, a skybox, and
+				// purple highlights / yellow shadows
 				water = createWaterPlane(scene);
 				skybox = createSkybox(scene);
-				levelMesh = createLevelMesh(level, camera, scene);
 				
 				var ambientLight = new THREE.AmbientLight( 0x800080 );
 				scene.add( ambientLight );
@@ -96,28 +104,52 @@
 				var dirLight = new THREE.DirectionalLight( 0xffffee, 2.5 );
 				dirLight.position.set( 1, 1, 0.5 ).normalize();
 				scene.add( dirLight );
-				dirLight.castShadow = true;
 
+				// other universal things: webGL renderer, Oculus Rift effect, statistics
 				renderer = new THREE.WebGLRenderer();
 				renderer.setClearColor( 0x000000, 1 );
-				renderer.setDepthTest(false);
-
-				effect = new THREE.OculusRiftEffect( renderer );
-
 				container.innerHTML = "";
-
 				container.appendChild( renderer.domElement );
+				renderer.autoClearColor = false;
+				
+				effect = new THREE.OculusRiftEffect( renderer );
 
 				stats = new Stats();
 				stats.domElement.style.position = 'absolute';
 				stats.domElement.style.top = '0px';
 				container.appendChild( stats.domElement );
-
-				// GUI
+				
+				// we want to window to adapt to resizes ((like when we hit F11 in Firefox))
 				window.addEventListener( 'resize', onWindowResize, false );
-
-				guiVisible = true;
 			}
+			
+			function loadLevel()	{
+				levelMesh = createLevelMesh(level, camera, scene);
+				
+				fogLevel = 50;
+				
+				scene.fog.near = 50;
+				scene.fog.far = 50;
+			}
+			
+			
+			function restartLevel()	{
+				scene.remove(levelMesh);
+				
+				controls.velocity.x = 0;
+				controls.velocity.y = 0;
+				controls.velocity.z = 0;
+				controls.canJump = false;
+				controls.moveBackward = false;
+				controls.moveForward = false;
+				controls.moveLeft = false;
+				controls.moveRight = false;
+				
+				restartLevelFlag = false;
+				
+				loadLevel();
+			}
+			
 
 			function onWindowResize() {
 				camera.aspect = window.innerWidth / window.innerHeight;
@@ -131,19 +163,33 @@
 			var angle = 0;
 			
 			function logic()	{
+				if (restartLevelFlag) restartLevel();
+				
 				var start = (new Date).getTime();
 				
-				// Poll VR, if it's ready.
+				// poll VR, if it's ready
 				polled = vr.pollState(vrstate);
 				controls.update( angle, polled ? vrstate : null, levelMesh );
 				
+				// the skybox has to keep up with the camera
 				skybox.position.x = camera.position.x;
 				skybox.position.y = camera.position.y;
 				skybox.position.z = camera.position.z;
 				
+				
+				// the water has to update and look cool too
 				water[0].offset.x += 0.005;
 				water[0].offset.y += 0.005;
 				
+				if (fogLevel < 9000)	{
+					fogLevel += 100;
+					scene.fog.far = fogLevel;
+				} else	{
+					scene.fog.near = 100000;
+					scene.fog.far = 100000;
+				}
+				
+				// logic should be running roughly independently of rendering
 				var end = (new Date).getTime();
 				var delta = end - start;
 				var delay = 33.33 - delta;
