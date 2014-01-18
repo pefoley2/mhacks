@@ -2,8 +2,8 @@
 
  my_controller.on('frame', function(frame_instance){
 
- 	$("#fingerCount").text(frame_instance.fingers.count);
- 	$("#handCount").text(frame_instance.hands.count);
+ 	$("#fingerCount").text(frame_instance.fingers.length);
+ 	$("#handCount").text(frame_instance.hands.length);
 
  });
 
