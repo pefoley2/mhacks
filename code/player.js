@@ -19,7 +19,7 @@
 
 var moveObject;
  
-THREE.OculusRiftControls = function ( camera ) {
+PlayerCharacter = function(camera)	{
 	moveObject = new THREE.Object3D();
 	moveObject.position.y = 0;
 	moveObject.add( camera );
