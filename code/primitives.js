@@ -86,9 +86,9 @@ function createLevelMesh(level, camera, scene)	{
 			var pX = i * UNIT_LEN;
 			var pZ = j * UNIT_LEN;
 			
-			var blkHeight = 1;
+			var blkHeight;
 			if (c == 'P')	{
-				blkHeight = 1;
+				blkHeight = 0;
 			} else	{
 				blkHeight = parseInt(c) - 1;
 			}
