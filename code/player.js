@@ -125,7 +125,7 @@ PlayerCharacter = function(camera)	{
 		
 		if (mode == "Shoot")	{
 			if (canFire == true)	{
-				var dir = new THREE.Vector3(0, angleYaw + (Math.random() * 5) - 2.5, 0);
+				var dir = new THREE.Vector3(anglePitch, angleYaw + (Math.random() * 5) - 2.5, 0);
 					
 				objArray.push(new PlayerBullet(camera.position, dir));
 				this.velocity.z = -0.5;

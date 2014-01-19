@@ -10,11 +10,14 @@ PlayerBullet = function(position, euler)	{
 	this.mesh.position.y = position.y;
 	this.mesh.position.z = position.z;
 	this.yaw = euler.y;
+	this.pitch = euler.x;
 	
 	var yawRadians = this.yaw * Math.PI / 180;
+	var pitchRadians = this.pitch * Math.PI / 180;
 	this.velocity = new THREE.Vector3();
-	this.velocity.x = 10 * Math.sin(yawRadians);
-	this.velocity.z = -10 * Math.cos(yawRadians);
+	this.velocity.x = 10 * Math.sin(yawRadians) * 1;//-Math.cos(pitchRadians);
+	this.velocity.y = 10 * Math.sin(pitchRadians);
+	this.velocity.z = -10 * Math.cos(yawRadians) * 1;//Math.cos(pitchRadians);
 	
 	this.ray = new THREE.Raycaster();
 	this.ray.ray.direction.set( 0, 0, -1 );
@@ -25,6 +28,7 @@ PlayerBullet = function(position, euler)	{
 	
 	this.update = function ()	{
 		this.mesh.position.x += this.velocity.x;
+		this.mesh.position.y += this.velocity.y;
 		this.mesh.position.z += this.velocity.z;
 		
 		// check collision	
