@@ -31,7 +31,7 @@
 		<div id="info"></div>
 		<!-- -->
 		
-		<script src="./lib/three-min.js"></script>
+		<script src="./lib/three.min.js"></script>
 		<script src="./lib/stats.min.js"></script>
 		<script src="./lib/vr.js"></script>
 		<script src="./code/oculusIntegration.js"></script>
@@ -109,7 +109,7 @@
 				// presumably, every level in this demo is going to have water, a skybox, and
 				// purple highlights / yellow shadows
 				water = createWaterPlane(scene);
-				skybox = createSkybox(scene);
+				//skybox = createSkybox(scene);
 				
 				var ambientLight = new THREE.AmbientLight( 0x400040 );
 				scene.add( ambientLight );
@@ -125,7 +125,7 @@
 				container.appendChild( renderer.domElement );
 				
 				effect = new THREE.OculusRiftEffect(renderer);
-				//setTimeout(function(){ effect.setSize(window.innerWidth, window.innerHeight); }, 300);
+				setTimeout(function(){ effect.setSize(window.innerWidth, window.innerHeight); }, 300);
 
 				//stats = new Stats();
 				//stats.domElement.style.position = 'absolute';

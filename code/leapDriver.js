@@ -7,9 +7,9 @@ var fist = 0;
 
 var mode = "None";
 
-var tolerance_xAxis = 40;
-var tolerance_forward = 40;
-var tolerance_up = 130;
+var tolerance_xAxis = 30;
+var tolerance_forward = 30;
+var tolerance_up = 140;
 var tolerance_shoot = 0.2;
 
 
