@@ -18,7 +18,8 @@
 			
 			#info	{
 				position: absolute;
-				top: 0px; width: 100%;
+				top: 0px;
+				width: 100%;
 				padding: 5px;
 			}
 		</style>
@@ -33,9 +34,10 @@
 		<script src="./lib/stats.min.js"></script>
 		<script src="./lib/vr.js"></script>
 		<script src="./code/oculusIntegration.js"></script>
+		<script src="./code/playerBullet.js"></script>
 		<script src="./code/player.js"></script>
 		<script src="./code/primitives.js"></script>
-		<script src="./code/bullet.js"></script>
+		<script src="./code/enemy.js"></script>
 
 		<script>
 			
@@ -45,11 +47,16 @@
 			var time = Date.now();
 			var ray;
 			var info;
+			
+			var angleYaw = 0;
+			var anglePitch = 0;
 
 			var cube;
 			var skybox;
 			var water;
 			var levelMesh;
+			
+			var objArray = new Array();
 			
 			var restartLevelFlag;
 
@@ -59,7 +66,7 @@
 				'--333444333--',
 				'----------2--',
 				'--2----------',
-				'--22-----22--',
+				'--2B-----22--',
 				'---111-111---',
 				'-----1P1-----'
 			];
@@ -87,7 +94,7 @@
 				
 				// create camera
 				camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 7000 );			
-				camera.rotation.order = 'XYZ';
+				camera.rotation.order = 'ZYX';
 				
 				// create player character
 				player = new PlayerCharacter(camera);
@@ -101,10 +108,10 @@
 				water = createWaterPlane(scene);
 				skybox = createSkybox(scene);
 				
-				var ambientLight = new THREE.AmbientLight( 0x800080 );
+				var ambientLight = new THREE.AmbientLight( 0x200020 );
 				scene.add( ambientLight );
 
-				var dirLight = new THREE.DirectionalLight( 0xffffee, 2.5 );
+				var dirLight = new THREE.DirectionalLight( 0xffffff, 2.5 );
 				dirLight.position.set( 1, 1, 0.5 ).normalize();
 				scene.add( dirLight );
 
@@ -150,6 +157,14 @@
 				
 				restartLevelFlag = false;
 				
+				for (var i = 0; i < objArray.length; i++)	{
+					if (typeof objArray[i].mesh != 'undefined')	{
+						scene.remove(objArray[i].mesh);
+					}
+				}
+				
+				objArray = []; 
+				
 				loadLevel();
 			}
 			
@@ -163,7 +178,6 @@
 
 			var polled;
 			var vrstate = new vr.State();
-			var angle = 0;
 			
 			function logic()	{
 				if (restartLevelFlag) restartLevel();
@@ -172,7 +186,7 @@
 				
 				// poll VR, if it's ready
 				polled = vr.pollState(vrstate);
-				player.update( angle, polled ? vrstate : null, levelMesh );
+				player.update( angleYaw, polled ? vrstate : null, levelMesh );
 				
 				// the skybox has to keep up with the camera
 				skybox.position.x = camera.position.x;
@@ -192,6 +206,26 @@
 					scene.fog.far = 100000;
 				}
 				
+				// update objects
+				for (var i = 0; i < objArray.length; i++) {
+					objArray[i].update();
+				}
+				
+				// delete objects that need to be
+				for (var i = objArray.length - 1; i > -1; i--) {
+					if (typeof objArray[i].deleteFlag != 'undefined')	{
+						if (objArray[i].deleteFlag)	{
+							if (typeof objArray[i].mesh != 'undefined')	{
+								scene.remove(objArray[i].mesh);
+							}
+					
+							objArray.splice(i, 1);
+						}
+					}
+				}
+
+				document.getElementById('info').innerHTML = "number of active objects: " + objArray.length;
+				
 				// logic should be running roughly independently of rendering
 				var end = (new Date).getTime();
 				var delta = end - start;
@@ -200,9 +234,9 @@
 			}
 			
 			function animate() {
-				vr.requestAnimationFrame( animate );
+				vr.requestAnimationFrame(animate);
 				
-				angle = effect.render( scene, camera, polled ? vrstate : null, angle );
+				effect.render(scene, camera, polled ? vrstate : null);
 				
 				stats.update();
 			}

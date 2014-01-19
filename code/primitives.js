@@ -89,6 +89,8 @@ function createLevelMesh(level, camera, scene)	{
 			var blkHeight;
 			if (c == 'P')	{
 				blkHeight = 0;
+			} else if (c >= 'A' && c < 'P')	{
+				blkHeight = (c.charCodeAt(0) - 'A'.charCodeAt(0));
 			} else	{
 				blkHeight = parseInt(c) - 1;
 			}
@@ -108,6 +110,8 @@ function createLevelMesh(level, camera, scene)	{
 				camera.position.x = pX;
 				camera.position.y = 30;
 				camera.position.z = pZ;
+			} else if (c >= 'A' && c < 'P')	{
+				objArray.push(new Enemy(new THREE.Vector3(pX, height, pZ)));
 			}
 		}
 	}

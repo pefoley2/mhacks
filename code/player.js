@@ -30,6 +30,7 @@ PlayerCharacter = function(camera)	{
 	var moveRight = false;
 
 	var canJump = false;
+	var canFire = true;
 
 	this.velocity = new THREE.Vector3();
 
@@ -60,11 +61,19 @@ PlayerCharacter = function(camera)	{
 			case 68: // d
 				moveRight = true;
 				break;
-			case 81: // space
+			case 81: // q
 				if ( canJump === true ) this.velocity.y += this.jumpSpeed;
 				canJump = false;
 				break;
-
+			case 69: // e
+				if (canFire == true)	{
+					var dir = new THREE.Vector3(0, angleYaw + (Math.random() * 5) - 2.5, 0);
+					
+					objArray.push(new PlayerBullet(camera.position, dir));
+					canFire = false;
+					
+					this.velocity.z = -0.5;
+				}
 		}
 
 	}.bind(this);
@@ -72,27 +81,21 @@ PlayerCharacter = function(camera)	{
 	var onKeyUp = function ( event ) {
 
 		switch( event.keyCode ) {
-
-			case 38: // up
 			case 87: // w
 				moveForward = false;
 				break;
-
-			case 37: // left
 			case 65: // a
 				moveLeft = false;
 				break;
-
-			case 40: // down
 			case 83: // s
 				moveBackward = false;
 				break;
-
-			case 39: // right
 			case 68: // d
 				moveRight = false;
 				break;
-
+			case 69: // e
+				canFire = true;
+				break;
 		}
 
 	};
@@ -115,8 +118,7 @@ PlayerCharacter = function(camera)	{
 
 	};
 
-	this.update = function ( angle, vrstate, levelMesh ) {
-
+	this.update = function ( angle, vrstate ) {
 		if ( moveBackward ) this.velocity.z -= this.MOVE_SPEED;
 		if ( moveForward ) this.velocity.z += this.MOVE_SPEED;
 
@@ -131,7 +133,7 @@ PlayerCharacter = function(camera)	{
 		this.velocity.y -= this.GRAVITY;
 		
 		var inters;
-		
+
 		// vertical collision
 		if (this.velocity.y <= 0)	{
 			var projectedPos = new THREE.Vector3(camera.position.x, camera.position.y - this.velocity.y, camera.position.z);
@@ -139,26 +141,25 @@ PlayerCharacter = function(camera)	{
 			this.ray.set(projectedPos, new THREE.Vector3(0, -1, 0));
 			inters = this.ray.intersectObject(levelMesh, false);
 			if (inters.length > 0)	{
-				document.getElementById('info').innerHTML = "collision " + inters[0].distance;
 				this.velocity.y = 0;
 				camera.position.y += (20 - inters[0].distance);
 				canJump = true;
 			} else	{
-				document.getElementById('info').innerHTML = "no collision";
 				canJump = false;
 			}
 		}
 		
+		// horizontal collision is handles slightly below the camera
 		var horizCollPos = new THREE.Vector3(camera.position.x, camera.position.y - 5, camera.position.z);
 		
-		// horizontal collision (X)
+		// horizontal collision (X axis)
 		this.ray.set(horizCollPos, new THREE.Vector3((this.velocity.x > 0) ? 1 : -1, 0, 0));
 		inters = this.ray.intersectObject(levelMesh, false);
 		if (inters.length > 0)	{
 			this.velocity.x = 0;
 		}
 
-		// horizontal collision (Z)
+		// horizontal collision (Z axis)
 		this.ray.set(horizCollPos, new THREE.Vector3(0, 0, (this.velocity.z > 0) ? -1 : 1));
 		inters = this.ray.intersectObject(levelMesh, false);
 		if (inters.length > 0)	{
@@ -169,12 +170,12 @@ PlayerCharacter = function(camera)	{
 		
 		
 		// forward movement
-		camera.position.x += this.velocity.z * Math.sin(angle * Math.PI / 180);
-		camera.position.z -= this.velocity.z * Math.cos(angle * Math.PI / 180);
+		camera.position.x += this.velocity.z * Math.sin(angleYaw * Math.PI / 180);
+		camera.position.z -= this.velocity.z * Math.cos(angleYaw * Math.PI / 180);
 		
 		// lateral movement
-		camera.position.x += this.velocity.x * Math.sin((angle + 90) * Math.PI / 180);
-		camera.position.z -= this.velocity.x * Math.cos((angle + 90) * Math.PI / 180);
+		camera.position.x += this.velocity.x * Math.sin((angleYaw + 90) * Math.PI / 180);
+		camera.position.z -= this.velocity.x * Math.cos((angleYaw + 90) * Math.PI / 180);
 		
 		// vertical movement
 		camera.position.y += this.velocity.y;
