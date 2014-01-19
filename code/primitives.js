@@ -59,7 +59,8 @@ function createSkybox(scene)	{
 	var skyMat = new THREE.MeshFaceMaterial( materialArray );
 	var skyGeo = new THREE.CubeGeometry(2000, 2000, 2000);
 	var skybox = new THREE.Mesh( skyGeo, skyMat );
-	scene.add(skybox);
+	//scene.add(skybox);
+	camera.add(skybox);
 	
 	return skybox;
 }

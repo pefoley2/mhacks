@@ -60,6 +60,8 @@ Enemy = function(position)	{
 				}
 				
 				this.mesh.position.y += (20 - inters[0].distance);
+				
+				
 			}
 		}
 		
@@ -81,6 +83,10 @@ Enemy = function(position)	{
 			if (this.hurtCounter == 24)	{
 				this.hurt = false;
 				this.hurtCounter = 0;
+			}
+			
+			if (this.health == 0)	{
+				this.deleteFlag == true;
 			}
 		}
 		

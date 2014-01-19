@@ -7,17 +7,22 @@ var fist = 0;
 
 var mode = "None";
 
-var tolerance_xAxis = 20;
-var tolerance_forward = 20;
-var tolerance_up = 150;
+var tolerance_xAxis = 60;
+var tolerance_forward = 30;
+var tolerance_up = 120;
 var tolerance_shoot = 0.2;
 
 
 //var c = $("#visualization")[0].getContext('2d');
 
+var my_controller = new Leap.Controller({enableGestures: false});
 
-Leap.loop(function(obj) {
-    var hands = obj.hands;
+
+ my_controller.on('connect', function(){
+	setInterval(function(){
+		var obj = my_controller.frame();
+		
+		    var hands = obj.hands;
 	if (hands.length == 1 && hands[0].valid) {
         var hand = hands[0];
         if (hand.stabilizedPalmPosition[0] > tolerance_xAxis) {
@@ -32,7 +37,7 @@ Leap.loop(function(obj) {
             left = 0;
 		}
 		
-		if (hand.stabilizedPalmPosition[2] < -tolerance_forward/4) {
+		if (hand.stabilizedPalmPosition[2] < -tolerance_forward) {
             forward = Math.abs(hand.stabilizedPalmPosition[2]);
 		} else {
             forward = 0;
@@ -81,6 +86,14 @@ Leap.loop(function(obj) {
         up = 0;
         mode = "None";
     }
-
+	
+	document.getElementById('info').innerHTML = "Leap Motion: " + " x: " + hand.stabilizedPalmPosition[0] +
+	                                            "  y: " + hand.stabilizedPalmPosition[1] + "  z: " +
+	                                            hand.stabilizedPalmPosition[2] + "  roll: " + hand.pitch()
+												+ "  rad: " + hand.sphereRadius;
+	
+	}, 200);
 });
 
+
+my_controller.connect();

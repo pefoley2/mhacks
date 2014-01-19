@@ -6,12 +6,13 @@
 		<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
 		<style>
 			body {
-				color: rgb(168, 148, 0);
-				font-family:Monospace;
+				background-color: #000000;
+				color: #dddddd;
+				font-family: Verdana;
 				font-size:13px;
 				text-align:center;
-
-				background-color: #000000;
+				
+				
 				margin: 0px;
 				overflow: hidden;
 			}
@@ -21,6 +22,7 @@
 				top: 0px;
 				width: 100%;
 				padding: 5px;
+				color: rgb(255, 255, 255);
 			}
 		</style>
 	</head>
@@ -29,7 +31,7 @@
 		<div id="info"></div>
 		<!-- -->
 		
-		<script src="./lib/three.min.js"></script>
+		<script src="./lib/three.js"></script>
 		<script src="./lib/stats.min.js"></script>
 		<script src="./lib/vr.js"></script>
 		<script src="./code/oculusIntegration.js"></script>
@@ -39,7 +41,7 @@
 		<script src="./code/enemy.js"></script>
 		<script src="http://js.leapmotion.com/0.3.0-beta3/leap.min.js"></script>
 		<script src="http://code.jquery.com/jquery-1.10.2.min.js"></script>
-		<script src="driver.js"></script>
+		<script src="./code/leapDriver.js"></script>
 		<script>
 			
 
@@ -91,11 +93,11 @@
 				scene = new THREE.Scene();
 				
 				// fog effect is used for awesome fade in
-				scene.fog = new THREE.Fog(0xffffff, 50, 50);
+				//scene.fog = new THREE.Fog(0xffffff, 50, 300);
 				
 				// create camera
 				camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 7000 );			
-				camera.rotation.order = 'ZYX';
+				camera.rotation.order = 'XYZ';
 				
 				// create player character
 				player = new PlayerCharacter(camera);
@@ -107,22 +109,23 @@
 				// presumably, every level in this demo is going to have water, a skybox, and
 				// purple highlights / yellow shadows
 				water = createWaterPlane(scene);
-				//skybox = createSkybox(scene);
+				skybox = createSkybox(scene);
 				
-				var ambientLight = new THREE.AmbientLight( 0x200020 );
+				var ambientLight = new THREE.AmbientLight( 0x400040 );
 				scene.add( ambientLight );
 
-				var dirLight = new THREE.DirectionalLight( 0xffffff, 2.5 );
+				var dirLight = new THREE.DirectionalLight( 0xffee22, 3 );
 				dirLight.position.set( 1, 1, 0.5 ).normalize();
 				scene.add( dirLight );
 
 				// other universal things: webGL renderer, Oculus Rift effect, statistics
 				renderer = new THREE.WebGLRenderer();
-				renderer.setClearColor( 0x000000, 1 );
+				renderer.setClearColor(0x6999AF, 1);
 				container.innerHTML = "";
 				container.appendChild( renderer.domElement );
 				
 				effect = new THREE.OculusRiftEffect(renderer);
+				setTimeout(function(){ effect.setSize(window.innerWidth, window.innerHeight); }, 300);
 
 				//stats = new Stats();
 				//stats.domElement.style.position = 'absolute';
@@ -138,8 +141,8 @@
 				
 				fogLevel = 50;
 				
-				scene.fog.near = 50;
-				scene.fog.far = 50;
+				//scene.fog.near = 50;
+				//scene.fog.far = 50;
 			}
 			
 			
@@ -188,11 +191,6 @@
 				polled = vr.pollState(vrstate);
 				player.update( angleYaw, polled ? vrstate : null, levelMesh );
 				
-				// the skybox has to keep up with the camera
-				//skybox.position.x = camera.position.x;
-				//skybox.position.y = camera.position.y;
-				//skybox.position.z = camera.position.z;
-				
 				player.moveForward = (forward > 0);
 				player.moveLeft = (left > 0);
 				player.moveRight = (right > 0);
@@ -203,10 +201,10 @@
 				
 				if (fogLevel < 9000)	{
 					fogLevel += 100;
-					scene.fog.far = fogLevel;
+					//scene.fog.far = fogLevel;
 				} else	{
-					scene.fog.near = 100000;
-					scene.fog.far = 100000;
+					//scene.fog.near = 100000;
+					//scene.fog.far = 100000;
 				}
 				
 				// update objects
@@ -227,8 +225,8 @@
 					}
 				}
 
-				document.getElementById('info').innerHTML = "Leap Motion: " + " u: " + up + "  f: " + forward + "  l: " +
-				                                            left + "  r: " + right + "  m: " + mode;
+				//document.getElementById('info').innerHTML = "Leap Motion: " + " u: " + up + "  f: " + forward + "  l: " +
+				//                                            left + "  r: " + right + "  m: " + mode;
 				
 				// logic should be running roughly independently of rendering
 				var end = (new Date).getTime();
@@ -241,9 +239,6 @@
 				vr.requestAnimationFrame(animate);
 				
 				effect.render(scene, camera, polled ? vrstate : null);
-				effect.setSize(window.innerWidth, window.innerHeight);
-				
-				//stats.update();
 			}
 
 		</script>

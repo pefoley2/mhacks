@@ -161,61 +161,7 @@ THREE.OculusRiftEffect.prototype.render = function(scene, camera, vrstate) {
 	var point = new THREE.Vector3( 1, 0, 0 );
 	point.applyMatrix4(rotMat);
 	angleYaw = Math.atan2(point.z, point.x) * 180 / Math.PI;
-	
-	/*var eulie = new THREE.Euler();
-	eulie.setFromQuaternion(quat);
-	
-	// 1, 0, 0 gives yaw
-	// 0, 1, 0 gives pitch
-	
-	// ---------------
-	// calculate yaw
-	// ---------------
-	var pointYaw = new THREE.Vector3( 1, 0, 0 );
-	pointYaw.applyMatrix4(rotMat);
-	
-	if (Math.abs(pointYaw.z) > 0.5)	{
-		rotateDirection = pointYaw.z / 0.75;
-	} else	{
-		rotateDirection = 0;
-	}
-	
-	
-	// ---------------
-	// calculate pitch
-	// ---------------
-	//anglePitch = eulie.x * 180 / Math.PI;
-	
-	var dir = new THREE.Vector3( 0, 1, 0 );
-	dir.applyQuaternion(quat);
-	//document.getElementById('info').innerHTML = dir.x + " " + dir.y + " " + dir.z;
 
-
-	//document.getElementById('info').innerHTML = Math.atan2(pointYaw.z, Math.sqrt(pointYaw.x * pointYaw.x + pointYaw.y * pointYaw.y)) * 180 / Math.PI;
-	
-	//document.getElementById('info').innerHTML = Math.atan2(pointYaw.z, pointYaw.x) * 180 / Math.PI;
-	
-	var roty = Math.atan2(pointYaw.z, pointYaw.x);
-	var rotx = Math.atan2(dir.y, dir.z);
-	var rotz = Math.atan2(dir.x, dir.y);
-	//document.getElementById('info').innerHTML = rotz;
-	
-	
-	// ROLL
-	// Math.atan2(pointYaw.y, Math.sqrt(pointYaw.x * pointYaw.x + pointYaw.z * pointYaw.z))
-	
-	// ---------------
-	// update camera
-	// ---------------
-	var rotMat2 = new THREE.Matrix4();
-	var eul = new THREE.Euler(0, -angleYaw * Math.PI / 180, 0);
-	//var eul = new THREE.Euler(eulie.x, eulie.y, eulie.z);
-	rotMat2.makeRotationFromEuler(eul);
-    eyeWorldMatrix.multiply(rotMat2);
-	
-	
-	angleYaw += rotateDirection * 2;
-	*/
   }
 
   // Shift around to the the eye center.
@@ -234,6 +180,7 @@ THREE.OculusRiftEffect.prototype.render = function(scene, camera, vrstate) {
     convertMatrix(eye.viewAdjustMatrix, viewAdjustMatrix);
     eyeCamera.matrixWorld.multiplyMatrices(viewAdjustMatrix, eyeWorldMatrix);
 
+	this.renderer_.setClearColor(0x6999AF, 1);
     this.renderer_.render(scene, this.eyeCamera_, undefined, true);
   }, this);
   

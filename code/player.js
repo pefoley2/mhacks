@@ -44,7 +44,7 @@ PlayerCharacter = function(camera)	{
 	this.ray.near = 0.1;
 	this.ray.far = 20;
 
-	/*
+	//*
 	var onKeyDown = function ( event ) {
 
 		switch ( event.keyCode ) {
@@ -100,9 +100,9 @@ PlayerCharacter = function(camera)	{
 
 	};
 
-	//document.addEventListener( 'keydown', onKeyDown, false );
-	//document.addEventListener( 'keyup', onKeyUp, false );
-*/
+	document.addEventListener( 'keydown', onKeyDown, false );
+	document.addEventListener( 'keyup', onKeyUp, false );
+//*/
 
 	this.enabled = false;
 
@@ -119,9 +119,26 @@ PlayerCharacter = function(camera)	{
 
 	this.update = function ( angle, vrstate ) {
 		if ( this.moveForward ) this.velocity.z += this.MOVE_SPEED;
-
+		if ( this.moveBackward ) this.velocity.z -= this.MOVE_SPEED;
 		if ( this.moveLeft ) this.velocity.x -= this.MOVE_SPEED;
 		if ( this.moveRight ) this.velocity.x += this.MOVE_SPEED;
+		
+		if (mode == "Shoot")	{
+			if (canFire == true)	{
+				var dir = new THREE.Vector3(0, angleYaw + (Math.random() * 5) - 2.5, 0);
+					
+				objArray.push(new PlayerBullet(camera.position, dir));
+				this.velocity.z = -0.5;
+				
+				canFire = false;
+				setTimeout(function(){ canFire = true }, 300);
+			}
+		}
+		
+		if (up)	{
+			if ( canJump === true ) this.velocity.y += this.jumpSpeed;
+			canJump = false;
+		}
 		
 		// lower limit to velocity
 		if (Math.abs(this.velocity.x) < 0.01) this.velocity.x = 0;
