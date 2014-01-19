@@ -7,9 +7,9 @@ var fist = 0;
 
 var mode = "None";
 
-var tolerance_xAxis = 20;
-var tolerance_forward = 20;
-var tolerance_up = 120;
+var tolerance_xAxis = 40;
+var tolerance_forward = 40;
+var tolerance_up = 130;
 var tolerance_shoot = 0.2;
 
 
@@ -87,7 +87,7 @@ var my_controller = new Leap.Controller({enableGestures: false});
         mode = "None";
     }
 	
-	}, 200);
+	}, 300);
 });
 
 
