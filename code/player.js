@@ -44,7 +44,7 @@ PlayerCharacter = function(camera)	{
 	this.ray.near = 0.1;
 	this.ray.far = 20;
 
-	//*
+	/*
 	var onKeyDown = function ( event ) {
 
 		switch ( event.keyCode ) {
