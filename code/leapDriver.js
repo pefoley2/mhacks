@@ -7,8 +7,8 @@ var fist = 0;
 
 var mode = "None";
 
-var tolerance_xAxis = 60;
-var tolerance_forward = 30;
+var tolerance_xAxis = 20;
+var tolerance_forward = 20;
 var tolerance_up = 120;
 var tolerance_shoot = 0.2;
 
@@ -25,13 +25,13 @@ var my_controller = new Leap.Controller({enableGestures: false});
 		    var hands = obj.hands;
 	if (hands.length == 1 && hands[0].valid) {
         var hand = hands[0];
-        if (hand.stabilizedPalmPosition[0] > tolerance_xAxis) {
+        if (hand.stabilizedPalmPosition[0] >= tolerance_xAxis) {
             right = Math.abs(hand.stabilizedPalmPosition[0]);
 		} else {
             right = 0;
 		}
 		
-		if (hand.stabilizedPalmPosition[0] < -tolerance_xAxis) {
+		if (hand.stabilizedPalmPosition[0] <= -tolerance_xAxis) {
             left = Math.abs(hand.stabilizedPalmPosition[0]);
 		} else {
             left = 0;
@@ -86,11 +86,6 @@ var my_controller = new Leap.Controller({enableGestures: false});
         up = 0;
         mode = "None";
     }
-	
-	document.getElementById('info').innerHTML = "Leap Motion: " + " x: " + hand.stabilizedPalmPosition[0] +
-	                                            "  y: " + hand.stabilizedPalmPosition[1] + "  z: " +
-	                                            hand.stabilizedPalmPosition[2] + "  roll: " + hand.pitch()
-												+ "  rad: " + hand.sphereRadius;
 	
 	}, 200);
 });
