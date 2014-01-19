@@ -29,7 +29,6 @@
 		<div id="info"></div>
 		<!-- -->
 		
-		<script src="http://code.jquery.com/jquery-2.0.3.min.js"></script>
 		<script src="./lib/three.min.js"></script>
 		<script src="./lib/stats.min.js"></script>
 		<script src="./lib/vr.js"></script>
@@ -38,7 +37,9 @@
 		<script src="./code/player.js"></script>
 		<script src="./code/primitives.js"></script>
 		<script src="./code/enemy.js"></script>
-
+		<script src="http://js.leapmotion.com/0.3.0-beta3/leap.min.js"></script>
+		<script src="http://code.jquery.com/jquery-1.10.2.min.js"></script>
+		<script src="driver.js"></script>
 		<script>
 			
 
@@ -106,7 +107,7 @@
 				// presumably, every level in this demo is going to have water, a skybox, and
 				// purple highlights / yellow shadows
 				water = createWaterPlane(scene);
-				skybox = createSkybox(scene);
+				//skybox = createSkybox(scene);
 				
 				var ambientLight = new THREE.AmbientLight( 0x200020 );
 				scene.add( ambientLight );
@@ -120,14 +121,13 @@
 				renderer.setClearColor( 0x000000, 1 );
 				container.innerHTML = "";
 				container.appendChild( renderer.domElement );
-				renderer.autoClearColor = false;
 				
-				effect = new THREE.OculusRiftEffect( renderer );
+				effect = new THREE.OculusRiftEffect(renderer);
 
-				stats = new Stats();
-				stats.domElement.style.position = 'absolute';
-				stats.domElement.style.top = '0px';
-				container.appendChild( stats.domElement );
+				//stats = new Stats();
+				//stats.domElement.style.position = 'absolute';
+				//stats.domElement.style.top = '0px';
+				//container.appendChild( stats.domElement );
 				
 				// we want to window to adapt to resizes ((like when we hit F11 in Firefox))
 				window.addEventListener( 'resize', onWindowResize, false );
@@ -150,7 +150,6 @@
 				player.velocity.y = 0;
 				player.velocity.z = 0;
 				player.canJump = false;
-				player.moveBackward = false;
 				player.moveForward = false;
 				player.moveLeft = false;
 				player.moveRight = false;
@@ -174,6 +173,7 @@
 				camera.updateProjectionMatrix();
 
 				renderer.setSize( window.innerWidth, window.innerHeight );
+				effect.setSize(window.innerWidth, window.innerHeight);
 			}
 
 			var polled;
@@ -189,10 +189,13 @@
 				player.update( angleYaw, polled ? vrstate : null, levelMesh );
 				
 				// the skybox has to keep up with the camera
-				skybox.position.x = camera.position.x;
-				skybox.position.y = camera.position.y;
-				skybox.position.z = camera.position.z;
+				//skybox.position.x = camera.position.x;
+				//skybox.position.y = camera.position.y;
+				//skybox.position.z = camera.position.z;
 				
+				player.moveForward = (forward > 0);
+				player.moveLeft = (left > 0);
+				player.moveRight = (right > 0);
 				
 				// the water has to update and look cool too
 				water[0].offset.x += 0.005;
@@ -224,12 +227,13 @@
 					}
 				}
 
-				document.getElementById('info').innerHTML = "number of active objects: " + objArray.length;
+				document.getElementById('info').innerHTML = "Leap Motion: " + " u: " + up + "  f: " + forward + "  l: " +
+				                                            left + "  r: " + right + "  m: " + mode;
 				
 				// logic should be running roughly independently of rendering
 				var end = (new Date).getTime();
 				var delta = end - start;
-				var delay = 33.33 - delta;
+				var delay = 50.00 - delta;
 				setTimeout(function(){logic()}, delay);
 			}
 			
@@ -237,8 +241,9 @@
 				vr.requestAnimationFrame(animate);
 				
 				effect.render(scene, camera, polled ? vrstate : null);
+				effect.setSize(window.innerWidth, window.innerHeight);
 				
-				stats.update();
+				//stats.update();
 			}
 
 		</script>

@@ -156,8 +156,13 @@ THREE.OculusRiftEffect.prototype.render = function(scene, camera, vrstate) {
         vrstate.hmd.rotation[3]);
     var rotMat = new THREE.Matrix4();
     rotMat.makeRotationFromQuaternion(quat);
+	eyeWorldMatrix.multiply(rotMat);
 	
-	var eulie = new THREE.Euler();
+	var point = new THREE.Vector3( 1, 0, 0 );
+	point.applyMatrix4(rotMat);
+	angleYaw = Math.atan2(point.z, point.x) * 180 / Math.PI;
+	
+	/*var eulie = new THREE.Euler();
 	eulie.setFromQuaternion(quat);
 	
 	// 1, 0, 0 gives yaw
@@ -195,6 +200,7 @@ THREE.OculusRiftEffect.prototype.render = function(scene, camera, vrstate) {
 	var rotz = Math.atan2(dir.x, dir.y);
 	//document.getElementById('info').innerHTML = rotz;
 	
+	
 	// ROLL
 	// Math.atan2(pointYaw.y, Math.sqrt(pointYaw.x * pointYaw.x + pointYaw.z * pointYaw.z))
 	
@@ -209,6 +215,7 @@ THREE.OculusRiftEffect.prototype.render = function(scene, camera, vrstate) {
 	
 	
 	angleYaw += rotateDirection * 2;
+	*/
   }
 
   // Shift around to the the eye center.

@@ -24,10 +24,9 @@ PlayerCharacter = function(camera)	{
 	moveObject.position.y = 0;
 	moveObject.add( camera );
 
-	var moveForward = false;
-	var moveBackward = false;
-	var moveLeft = false;
-	var moveRight = false;
+	this.moveForward = false;
+	this.moveLeft = false;
+	this.moveRight = false;
 
 	var canJump = false;
 	var canFire = true;
@@ -36,7 +35,7 @@ PlayerCharacter = function(camera)	{
 
 	var PI_2 = Math.PI / 2;
 
-	this.MOVE_SPEED = 4;
+	this.MOVE_SPEED = 3;
 	this.GRAVITY = 0.3;
 	this.jumpSpeed = 5;
 	
@@ -45,6 +44,7 @@ PlayerCharacter = function(camera)	{
 	this.ray.near = 0.1;
 	this.ray.far = 20;
 
+	/*
 	var onKeyDown = function ( event ) {
 
 		switch ( event.keyCode ) {
@@ -100,8 +100,9 @@ PlayerCharacter = function(camera)	{
 
 	};
 
-	document.addEventListener( 'keydown', onKeyDown, false );
-	document.addEventListener( 'keyup', onKeyUp, false );
+	//document.addEventListener( 'keydown', onKeyDown, false );
+	//document.addEventListener( 'keyup', onKeyUp, false );
+*/
 
 	this.enabled = false;
 
@@ -112,18 +113,15 @@ PlayerCharacter = function(camera)	{
 	};
 
 	this.isOnObject = function ( boolean ) {
-
 		isOnObject = boolean;
 		canJump = boolean;
-
 	};
 
 	this.update = function ( angle, vrstate ) {
-		if ( moveBackward ) this.velocity.z -= this.MOVE_SPEED;
-		if ( moveForward ) this.velocity.z += this.MOVE_SPEED;
+		if ( this.moveForward ) this.velocity.z += this.MOVE_SPEED;
 
-		if ( moveLeft ) this.velocity.x -= this.MOVE_SPEED;
-		if ( moveRight ) this.velocity.x += this.MOVE_SPEED;
+		if ( this.moveLeft ) this.velocity.x -= this.MOVE_SPEED;
+		if ( this.moveRight ) this.velocity.x += this.MOVE_SPEED;
 		
 		// lower limit to velocity
 		if (Math.abs(this.velocity.x) < 0.01) this.velocity.x = 0;
